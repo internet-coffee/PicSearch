@@ -4,15 +4,15 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.core.content.IntentCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.android.picsearch.network.RetrofitInstance
+import com.android.picsearch.network.LitterboxUploader
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 sealed class UiState {
     data object Idle : UiState()
@@ -30,7 +30,7 @@ class MainViewModel : ViewModel() {
         if (intent?.action != Intent.ACTION_SEND) return
         when {
             intent.type?.startsWith("image/") == true -> {
-                val uri = intent.getParcelableExtra(Intent.EXTRA_STREAM) as? Uri
+                val uri = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
                 if (uri != null) {
                     uploadImage(uri, contentResolver)
                 } else {
@@ -49,25 +49,14 @@ class MainViewModel : ViewModel() {
             try {
                 contentResolver.openInputStream(uri)?.use { inputStream ->
                     val fileBytes = inputStream.readBytes()
-                    val requestBody = fileBytes.toRequestBody(
-                        contentResolver.getType(uri)?.toMediaTypeOrNull()
-                    )
+                    val mimeType = contentResolver.getType(uri) ?: "image/jpeg"
+                    val fileName = getFileName(uri, contentResolver)
 
-                    val multipartBody = MultipartBody.Part.createFormData(
-                        "file",
-                        getFileName(uri, contentResolver),
-                        requestBody
-                    )
+                    val imageUrl = LitterboxUploader.upload(fileBytes, mimeType, fileName)
 
-                    val response = RetrofitInstance.api.uploadFile(multipartBody)
-
-                    if (response.status == "success") {
-                        val finalUrl = "https://lens.google.com/uploadbyurl?url=${
-                            response.data.url
-                                .replace("tmpfiles.org/", "tmpfiles.org/dl/")
-                                .replaceFirst("http://", "https://")
-                        }"
-
+                    if (imageUrl != null) {
+                        val encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8.toString())
+                        val finalUrl = "https://lens.google.com/uploadbyurl?url=$encodedUrl"
                         _uiState.value = UiState.Success(finalUrl)
                     } else {
                         _uiState.value = UiState.Error("Upload failed")

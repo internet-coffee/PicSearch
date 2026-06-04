@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,8 +12,8 @@ android {
         applicationId = "com.android.picsearch"
         minSdk = 24
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.1.1"
+        versionCode = 4
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,11 +52,6 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    // Networking & Serialization
-    implementation(libs.retrofit)
-    implementation(libs.okhttp)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.retrofit.kotlinx.serialization.converter)
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

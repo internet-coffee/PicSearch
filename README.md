@@ -1,3 +1,4 @@
+## ⚠Important: If you encounter connection problems, please visit [this website](https://status.catbox.moe/status/catbox) to check the status of catbox.moe. If the problem persists, please report in the issue.
 # PicSearch 🔍
 
 use google reverse image search to search the image on your device.

@@ -16,8 +16,8 @@ PicSearch is a super lightweight utility that hooks into Android Share Sheet. Le
 When you share an image file, Google Lens needs a public URL to analyze it. PicSearch makes this happen seamlessly:
 
 1.  The app receives the shared image.
-2.  It uploads the image to the temporary file hosting service **[tmpfiles.org](https://tmpfiles.org/)**.
-3.  `tmpfiles.org` provides a direct, temporary link to that image.
+2.  It uploads the image to the temporary file hosting service **[Litterbox](https://litterbox.catbox.moe)**.
+3.  `Litterbox` (by catbox.moe) provides a direct, temporary link to that image.
 4.  The app then hands this link over to Google Lens for the reverse image search.
 
 
@@ -32,8 +32,6 @@ This app was built using a modern, minimal Android tech stack:
 
 *   **Language:** Kotlin
 *   **UI:** Jetpack Compose
-*   **Networking:** Retrofit & OkHttp
-*   **JSON Parsing:** Kotlinx Serialization
 *   **Architecture:** Android ViewModel for state management
 *   **Asynchronous Tasks:** Kotlin Coroutines
 

@@ -2,7 +2,6 @@ package com.android.picsearch
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.net.toUri
 import com.android.picsearch.ui.theme.PicSearchTheme
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -47,7 +47,6 @@ class MainActivity : ComponentActivity() {
                 launchCustomTab(this, finalUrl)
 
                 finish()
-                overridePendingTransition(0, 0)
                 return
             }
         }
@@ -67,7 +66,6 @@ class MainActivity : ComponentActivity() {
                         uiState = uiState,
                         onFinishApp = {
                             finish()
-                            overridePendingTransition(0, 0)
                         }
                     )
                 }
@@ -108,7 +106,7 @@ fun MainScreen(
 
 fun launchCustomTab(context: Context, url: String) {
     try {
-        CustomTabsIntent.Builder().build().launchUrl(context, Uri.parse(url))
+        CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
     } catch (e: Exception) {
         e.printStackTrace()
     }

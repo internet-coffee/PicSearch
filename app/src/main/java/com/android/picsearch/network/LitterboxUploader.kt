@@ -21,6 +21,7 @@ object LitterboxUploader {
      * @param mimeType    MIME 類型
      * @param fileName    上傳時使用的檔名
      * @return 上傳成功後公開 URL，失敗回傳 null
+     * @throws java.io.IOException 上傳失敗時拋出
      */
     suspend fun upload(
         fileBytes: ByteArray,

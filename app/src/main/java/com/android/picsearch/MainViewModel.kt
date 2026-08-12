@@ -1,11 +1,12 @@
 package com.android.picsearch
 
+import android.app.Application
 import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import androidx.core.content.IntentCompat
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.picsearch.network.LitterboxUploader
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,10 +22,12 @@ sealed class UiState {
     data class Error(val message: String) : UiState()
 }
 
-class MainViewModel : ViewModel() {
+class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow<UiState>(UiState.Idle)
     val uiState = _uiState.asStateFlow()
+
+    private fun getString(resId: Int): String = getApplication<Application>().getString(resId)
 
     fun handleIntent(intent: Intent?, contentResolver: ContentResolver) {
         if (intent?.action != Intent.ACTION_SEND) return
@@ -34,11 +37,11 @@ class MainViewModel : ViewModel() {
                 if (uri != null) {
                     uploadImage(uri, contentResolver)
                 } else {
-                    _uiState.value = UiState.Error("Failed to get image URI")
+                    _uiState.value = UiState.Error(getString(R.string.error_failed_to_get_image_uri))
                 }
             }
             else -> {
-                _uiState.value = UiState.Error("Unsupported content type")
+                _uiState.value = UiState.Error(getString(R.string.error_unsupported_content_type))
             }
         }
     }
@@ -54,18 +57,14 @@ class MainViewModel : ViewModel() {
 
                     val imageUrl = LitterboxUploader.upload(fileBytes, mimeType, fileName)
 
-                    if (imageUrl != null) {
-                        val encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8.toString())
-                        val finalUrl = "https://lens.google.com/uploadbyurl?url=$encodedUrl"
-                        _uiState.value = UiState.Success(finalUrl)
-                    } else {
-                        _uiState.value = UiState.Error("Upload failed")
-                    }
+                    val encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8.toString())
+                    val finalUrl = "https://lens.google.com/uploadbyurl?url=$encodedUrl"
+                    _uiState.value = UiState.Success(finalUrl)
                 } ?: run {
-                    _uiState.value = UiState.Error("Cannot read file")
+                    _uiState.value = UiState.Error(getString(R.string.error_cannot_read_file))
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error(e.message ?: "Unknown error")
+                _uiState.value = UiState.Error(e.message ?: getString(R.string.error_unknown))
             }
         }
     }

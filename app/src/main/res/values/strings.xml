@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">PicSearch</string>
+    <string name="error_prefix">Error:</string>
+    <string name="error_failed_to_get_image_uri">Failed to get image URI</string>
+    <string name="error_unsupported_content_type">Unsupported content type</string>
+    <string name="error_cannot_read_file">Cannot read file</string>
+    <string name="error_unknown">Unknown error</string>
 </resources>

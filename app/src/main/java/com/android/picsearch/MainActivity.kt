@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import com.android.picsearch.ui.theme.PicSearchTheme
 import java.net.URLEncoder
@@ -89,7 +90,7 @@ fun MainScreen(
     ) {
         when (uiState) {
             is UiState.Idle -> {}
-            is UiState.Error -> Text(text = "Error: ${uiState.message}")
+            is UiState.Error -> Text(text = stringResource(R.string.error_prefix) + uiState.message)
             is UiState.Loading, is UiState.Success -> {
                 CircularProgressIndicator()
 

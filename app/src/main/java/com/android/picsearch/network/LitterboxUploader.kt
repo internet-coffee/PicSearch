@@ -29,14 +29,10 @@ object LitterboxUploader {
     ): String? {
         Log.d(TAG, "Trying Litterbox... (${fileBytes.size} bytes)")
         val litterboxUrl = uploadToLitterbox(fileBytes, mimeType, fileName)
-        if (litterboxUrl != null) {
-            Log.d(TAG, "Litterbox success: $litterboxUrl")
-            return litterboxUrl
-        }
-
-        Log.e(TAG, "Litterbox failed")
-        return null
+        Log.d(TAG, "Litterbox success: $litterboxUrl")
+        return litterboxUrl
     }
+
 
     // Litterbox
 
@@ -44,24 +40,19 @@ object LitterboxUploader {
         fileBytes: ByteArray,
         mimeType: String,
         fileName: String
-    ): String? = withContext(Dispatchers.IO) {
-        try {
-            val boundary = boundary()
-            val conn = openConnection(boundary)
+    ): String = withContext(Dispatchers.IO) {
+        val boundary = boundary()
+        val conn = openConnection(boundary)
 
-            DataOutputStream(conn.outputStream).use { dos ->
-                dos.writeField(boundary, "reqtype", "fileupload")
-                dos.writeField(boundary, "time", "1h")
-                dos.writeFilePart(boundary, "fileToUpload", fileName, mimeType, fileBytes)
-                dos.writeBytes("--$boundary--\r\n")
-                dos.flush()
-            }
-
-            readResponse(conn)
-        } catch (e: Exception) {
-            Log.e(TAG, "Litterbox exception", e)
-            null
+        DataOutputStream(conn.outputStream).use { dos ->
+            dos.writeField(boundary, "reqtype", "fileupload")
+            dos.writeField(boundary, "time", "1h")
+            dos.writeFilePart(boundary, "fileToUpload", fileName, mimeType, fileBytes)
+            dos.writeBytes("--$boundary--\r\n")
+            dos.flush()
         }
+
+        readResponse(conn)
     }
 
     // 輔助函式
@@ -101,13 +92,16 @@ object LitterboxUploader {
         writeBytes("\r\n")
     }
 
-    private fun readResponse(conn: HttpURLConnection): String? {
+    private fun readResponse(conn: HttpURLConnection): String {
         val code = conn.responseCode
-        return if (code == 200) {
-            conn.inputStream.bufferedReader().use { it.readText() }.trim().takeIf { it.isNotEmpty() }
-        } else {
+        if (code != 200) {
             Log.e(TAG, "Litterbox HTTP $code")
-            null
+            throw java.io.IOException("HTTP $code")
         }
+        val body = conn.inputStream.bufferedReader().use { it.readText() }.trim()
+        if (body.isEmpty()) {
+            throw java.io.IOException("Empty response body")
+        }
+        return body
     }
 }

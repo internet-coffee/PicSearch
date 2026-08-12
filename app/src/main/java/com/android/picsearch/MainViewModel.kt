@@ -65,7 +65,7 @@ class MainViewModel : ViewModel() {
                     _uiState.value = UiState.Error("Cannot read file")
                 }
             } catch (e: Exception) {
-                _uiState.value = UiState.Error("Error: ${e.message}")
+                _uiState.value = UiState.Error(e.message ?: "Unknown error")
             }
         }
     }

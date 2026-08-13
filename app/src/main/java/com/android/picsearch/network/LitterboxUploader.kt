@@ -49,7 +49,7 @@ object LitterboxUploader {
             dos.writeField(boundary, "reqtype", "fileupload")
             dos.writeField(boundary, "time", "1h")
             dos.writeFilePart(boundary, "fileToUpload", fileName, mimeType, fileBytes)
-            dos.writeBytes("--$boundary--\r\n")
+            dos.writeUtf8("--$boundary--\r\n")
             dos.flush()
         }
 
@@ -73,10 +73,14 @@ object LitterboxUploader {
             setRequestProperty("Content-Type", "multipart/form-data; boundary=$boundary")
         }
 
+    private fun DataOutputStream.writeUtf8(text: String) {
+        write(text.toByteArray(Charsets.UTF_8))
+    }
+
     private fun DataOutputStream.writeField(boundary: String, name: String, value: String) {
-        writeBytes("--$boundary\r\n")
-        writeBytes("Content-Disposition: form-data; name=\"$name\"\r\n\r\n")
-        writeBytes("$value\r\n")
+        writeUtf8("--$boundary\r\n")
+        writeUtf8("Content-Disposition: form-data; name=\"$name\"\r\n\r\n")
+        writeUtf8("$value\r\n")
     }
 
     private fun DataOutputStream.writeFilePart(
@@ -86,11 +90,11 @@ object LitterboxUploader {
         mimeType: String,
         bytes: ByteArray
     ) {
-        writeBytes("--$boundary\r\n")
-        writeBytes("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"$fileName\"\r\n")
-        writeBytes("Content-Type: $mimeType\r\n\r\n")
+        writeUtf8("--$boundary\r\n")
+        writeUtf8("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"$fileName\"\r\n")
+        writeUtf8("Content-Type: $mimeType\r\n\r\n")
         write(bytes)
-        writeBytes("\r\n")
+        writeUtf8("\r\n")
     }
 
     private fun readResponse(conn: HttpURLConnection): String {

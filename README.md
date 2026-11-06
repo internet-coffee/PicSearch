@@ -1,12 +1,12 @@
 ## ⚠Important: If you encounter connection problems, please visit [this website](https://status.catbox.moe/status/catbox) to check the status of catbox.moe. If the problem persists, please report in the issue.
 # PicSearch 🔍
 
-use google reverse image search to search the image on your device.
+use multiple reverse image engine search to search the image.
 
 
 ## About this project
 
-PicSearch is a super lightweight utility. Let you quickly find the source of an image using Google Lens.
+PicSearch is a super lightweight utility. Let you quickly find the source of an image.
 
 *   **Works from anywhere:** Use it from your photo gallery, web browser, or any app that can share images or links.
 *   **Share an image:** Share a picture file directly from your phone.

@@ -6,8 +6,6 @@ use multiple reverse image engine search to search the image.
 
 ## About this project
 
-PicSearch is a super lightweight utility. Let you quickly find the source of an image.
-
 *   **Support multiple reverse image search engines:** Google Lens, trace.moe, SauceNAO
 *   **Works from anywhere:** Use it from your photo gallery, web browser, or any app that can share images or links.
 *   **Share an image:** Share a picture file directly from your phone.

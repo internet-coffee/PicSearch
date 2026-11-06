@@ -6,7 +6,7 @@ use google reverse image search to search the image on your device.
 
 ## About this project
 
-PicSearch is a super lightweight utility that hooks into Android Share Sheet. Let you quickly find the source of an image using Google Lens.
+PicSearch is a super lightweight utility. Let you quickly find the source of an image using Google Lens.
 
 *   **Works from anywhere:** Use it from your photo gallery, web browser, or any app that can share images or links.
 *   **Share an image:** Share a picture file directly from your phone.
@@ -18,12 +18,15 @@ When you share an image file, Google Lens needs a public URL to analyze it. PicS
 
 1.  The app receives the shared image.
 2.  It uploads the image to the temporary file hosting service **[Litterbox](https://litterbox.catbox.moe)**.
-3.  `Litterbox` (by catbox.moe) provides a direct, temporary link to that image.
+3.  `Litterbox` (by catbox.moe) provides a direct, 1 hour  temporary link to that image.
 4.  The app then hands this link over to Google Lens for the reverse image search.
 
 
-## Screenshots
-<img src="https://github.com/user-attachments/assets/93fd3cf8-20dc-404b-b6f5-73dd02bad59d" width=30%/>
+## Preview
+
+https://github.com/user-attachments/assets/4265f82f-b6be-44b8-81d6-956245ab89db
+
+
 
 
 
@@ -41,7 +44,7 @@ This app was built using a modern, minimal Android tech stack:
 To build this project yourself:
 
 1.  Clone this repository.
-2.  Open it in the latest version of Android Studio.
+2.  Open it in Android Studio.
 3.  Build and run!
 
 ## License

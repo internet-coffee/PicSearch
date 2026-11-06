@@ -59,6 +59,44 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity-alias>
+
+        <!-- SauceNAO -->
+        <activity-alias
+            android:name=".SauceNaoAlias"
+            android:exported="true"
+            android:label="@string/share_target_saucenao"
+            android:targetActivity=".MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Bing -->
+        <activity-alias
+            android:name=".BingAlias"
+            android:exported="true"
+            android:label="@string/share_target_bing"
+            android:targetActivity=".MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

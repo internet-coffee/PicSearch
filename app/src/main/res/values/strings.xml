@@ -7,4 +7,6 @@
     <string name="error_unknown">Unknown error</string>
     <string name="share_target_google">Google</string>
     <string name="share_target_trace_moe">trace.moe</string>
+    <string name="share_target_saucenao">SauceNAO</string>
+    <string name="share_target_bing">Bing</string>
 </resources>

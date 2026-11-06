@@ -28,8 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
 import com.android.picsearch.ui.theme.PicSearchTheme
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
 
@@ -42,10 +40,8 @@ class MainActivity : ComponentActivity() {
         if (savedInstanceState == null && intent?.action == Intent.ACTION_SEND && intent.type == "text/plain") {
             val textUrl = intent.getStringExtra(Intent.EXTRA_TEXT)
             if (!textUrl.isNullOrBlank()) {
-                val encodedUrl = URLEncoder.encode(textUrl, StandardCharsets.UTF_8.toString())
-                val finalUrl = "https://lens.google.com/uploadbyurl?url=$encodedUrl"
-
-                launchCustomTab(this, finalUrl)
+                val engine = SearchEngine.fromIntent(intent)
+                launchCustomTab(this, engine.buildUrl(textUrl))
 
                 finish()
                 return

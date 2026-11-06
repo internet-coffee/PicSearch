@@ -5,4 +5,6 @@
     <string name="error_unsupported_content_type">不支援的內容類型</string>
     <string name="error_cannot_read_file">無法讀取檔案</string>
     <string name="error_unknown">未知錯誤</string>
+    <string name="share_target_google">Google</string>
+    <string name="share_target_trace_moe">trace.moe</string>
 </resources>

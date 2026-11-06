@@ -20,21 +20,45 @@
             android:excludeFromRecents="true"
             android:exported="true"
             android:noHistory="true"
-            android:theme="@style/Theme.PicSearch.Transparent">
+            android:theme="@style/Theme.PicSearch.Transparent"/>
+
+        <!-- Google -->
+        <activity-alias
+            android:name=".GoogleAlias"
+            android:exported="true"
+            android:label="@string/share_target_google"
+            android:targetActivity=".MainActivity">
 
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="text/plain" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="image/*" />
             </intent-filter>
+        </activity-alias>
 
-        </activity>
+        <!-- trace.moe -->
+        <activity-alias
+            android:name=".TraceMoeAlias"
+            android:exported="true"
+            android:label="@string/share_target_trace_moe"
+            android:targetActivity=".MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+        </activity-alias>
     </application>
 
 </manifest>

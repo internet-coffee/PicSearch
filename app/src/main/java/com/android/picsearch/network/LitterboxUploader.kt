@@ -27,7 +27,7 @@ object LitterboxUploader {
         fileBytes: ByteArray,
         mimeType: String,
         fileName: String
-    ): String? {
+    ): String {
         Log.d(TAG, "Trying Litterbox... (${fileBytes.size} bytes)")
         val litterboxUrl = uploadToLitterbox(fileBytes, mimeType, fileName)
         Log.d(TAG, "Litterbox success: $litterboxUrl")
@@ -45,15 +45,19 @@ object LitterboxUploader {
         val boundary = boundary()
         val conn = openConnection(boundary)
 
-        DataOutputStream(conn.outputStream).use { dos ->
-            dos.writeField(boundary, "reqtype", "fileupload")
-            dos.writeField(boundary, "time", "1h")
-            dos.writeFilePart(boundary, "fileToUpload", fileName, mimeType, fileBytes)
-            dos.writeUtf8("--$boundary--\r\n")
-            dos.flush()
-        }
+        try {
+            DataOutputStream(conn.outputStream).use { dos ->
+                dos.writeField(boundary, "reqtype", "fileupload")
+                dos.writeField(boundary, "time", "1h")
+                dos.writeFilePart(boundary, "fileToUpload", fileName, mimeType, fileBytes)
+                dos.writeUtf8("--$boundary--\r\n")
+                dos.flush()
+            }
 
-        readResponse(conn)
+            readResponse(conn)
+        } finally {
+            conn.disconnect()
+        }
     }
 
     // 輔助函式

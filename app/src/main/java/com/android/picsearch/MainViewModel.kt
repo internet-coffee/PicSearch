@@ -12,8 +12,6 @@ import com.android.picsearch.network.LitterboxUploader
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 sealed class UiState {
     data object Idle : UiState()
@@ -31,11 +29,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun handleIntent(intent: Intent?, contentResolver: ContentResolver) {
         if (intent?.action != Intent.ACTION_SEND) return
+        val engine = SearchEngine.fromIntent(intent)
         when {
             intent.type?.startsWith("image/") == true -> {
                 val uri = IntentCompat.getParcelableExtra(intent, Intent.EXTRA_STREAM, Uri::class.java)
                 if (uri != null) {
-                    uploadImage(uri, contentResolver)
+                    uploadImage(uri, contentResolver, engine)
                 } else {
                     _uiState.value = UiState.Error(getString(R.string.error_failed_to_get_image_uri))
                 }
@@ -46,7 +45,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    private fun uploadImage(uri: Uri, contentResolver: ContentResolver) {
+    private fun uploadImage(uri: Uri, contentResolver: ContentResolver, engine: SearchEngine) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             try {
@@ -57,9 +56,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
                     val imageUrl = LitterboxUploader.upload(fileBytes, mimeType, fileName)
 
-                    val encodedUrl = URLEncoder.encode(imageUrl, StandardCharsets.UTF_8.toString())
-                    val finalUrl = "https://lens.google.com/uploadbyurl?url=$encodedUrl"
-                    _uiState.value = UiState.Success(finalUrl)
+                    _uiState.value = UiState.Success(engine.buildUrl(imageUrl))
                 } ?: run {
                     _uiState.value = UiState.Error(getString(R.string.error_cannot_read_file))
                 }

@@ -1,33 +1,26 @@
 package com.android.picsearch
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.picsearch.ui.theme.PicSearchTheme
+
+private const val TAG = "PicSearch"
 
 class MainActivity : ComponentActivity() {
 
@@ -49,7 +42,7 @@ class MainActivity : ComponentActivity() {
         }
 
         if (savedInstanceState == null) {
-            viewModel.handleIntent(intent, contentResolver)
+            viewModel.handleIntent(intent)
         }
 
         setContent {
@@ -58,43 +51,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val uiState by viewModel.uiState.collectAsState()
+                    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                     MainScreen(
                         uiState = uiState,
-                        onFinishApp = {
-                            finish()
-                        }
+                        onFinishApp = { finish() }
                     )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MainScreen(
-    uiState: UiState,
-    onFinishApp: () -> Unit
-) {
-    val context = LocalContext.current
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(WindowInsets.safeDrawing.asPaddingValues()),
-        contentAlignment = Alignment.Center
-    ) {
-        when (uiState) {
-            is UiState.Idle -> {}
-            is UiState.Error -> Text(text = stringResource(R.string.error_prefix) + uiState.message)
-            is UiState.Loading, is UiState.Success -> {
-                CircularProgressIndicator()
-
-                if (uiState is UiState.Success) {
-                    LaunchedEffect(uiState.url) {
-                        launchCustomTab(context, uiState.url)
-                        onFinishApp()
-                    }
                 }
             }
         }
@@ -104,7 +65,8 @@ fun MainScreen(
 fun launchCustomTab(context: Context, url: String) {
     try {
         CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } catch (e: ActivityNotFoundException) {
+        Log.w(TAG, "No browser available", e)
+        Toast.makeText(context, R.string.error_no_browser, Toast.LENGTH_LONG).show()
     }
 }

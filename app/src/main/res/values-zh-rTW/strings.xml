@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">PicSearch</string>
-    <string name="error_prefix">錯誤：</string>
+    <string name="error_message">錯誤：%1$s</string>
+    <string name="error_no_browser">找不到可開啟網頁的瀏覽器</string>
     <string name="error_failed_to_get_image_uri">獲取圖片URL失敗</string>
     <string name="error_unsupported_content_type">不支援的內容類型</string>
     <string name="error_cannot_read_file">無法讀取檔案</string>

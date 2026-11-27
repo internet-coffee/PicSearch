@@ -4,6 +4,7 @@ import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.DataOutputStream
+import java.io.IOException
 import java.net.HttpURLConnection
 import java.net.URL
 import java.util.UUID
@@ -20,8 +21,8 @@ object LitterboxUploader {
      * @param fileBytes   圖片的原始位元組
      * @param mimeType    MIME 類型
      * @param fileName    上傳時使用的檔名
-     * @return 上傳成功後公開 URL，失敗回傳 null
-     * @throws java.io.IOException 上傳失敗時拋出
+     * @return 上傳成功後的公開 URL
+     * @throws IOException 上傳失敗時拋出
      */
     suspend fun upload(
         fileBytes: ByteArray,
@@ -30,7 +31,7 @@ object LitterboxUploader {
     ): String {
         Log.d(TAG, "Trying Litterbox... (${fileBytes.size} bytes)")
         val litterboxUrl = uploadToLitterbox(fileBytes, mimeType, fileName)
-        Log.d(TAG, "Litterbox success: $litterboxUrl")
+        Log.d(TAG, "Litterbox upload succeeded")
         return litterboxUrl
     }
 
@@ -95,7 +96,8 @@ object LitterboxUploader {
         bytes: ByteArray
     ) {
         writeUtf8("--$boundary\r\n")
-        writeUtf8("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"$fileName\"\r\n")
+        val safeName = fileName.replace(Regex("[\"\r\n]"), "_")
+        writeUtf8("Content-Disposition: form-data; name=\"$fieldName\"; filename=\"$safeName\"\r\n")
         writeUtf8("Content-Type: $mimeType\r\n\r\n")
         write(bytes)
         writeUtf8("\r\n")
@@ -105,11 +107,11 @@ object LitterboxUploader {
         val code = conn.responseCode
         if (code != 200) {
             Log.e(TAG, "Litterbox HTTP $code")
-            throw java.io.IOException("HTTP $code")
+            throw IOException("HTTP $code")
         }
         val body = conn.inputStream.bufferedReader().use { it.readText() }.trim()
         if (body.isEmpty()) {
-            throw java.io.IOException("Empty response body")
+            throw IOException("Empty response body")
         }
         return body
     }
